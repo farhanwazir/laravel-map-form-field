@@ -1,0 +1,33 @@
+{
+  "name": "farhanwazir/laravel-map-form-field",
+  "description": "Laravel map form field package.",
+  "license": "MIT",
+  "keywords": [
+    "laravel",
+    "gmap",
+    "map",
+    "google",
+    "googlemap",
+    "gmap",
+    "form",
+    "location"
+  ],
+  "authors": [
+    {
+      "name": "Farhan Wazir",
+      "email": "seejee1@gmail.com",
+      "role": "Author"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0",
+    "laravel/framework": "5.*",
+    "farhanwazir/laravelgooglemaps": "^1.8"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.5.x-dev"
+    }
+  },
+  "minimum-stability": "dev"
+}
