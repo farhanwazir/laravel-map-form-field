@@ -24,6 +24,11 @@
     "laravel/framework": "5.*",
     "farhanwazir/laravelgooglemaps": "^1.8"
   },
+  "autoload": {
+    "psr-4": {
+      "FarhanWazir\\LaravelMapFormField\\": "src/FarhanWazir/LaravelMapFormField/"
+    }
+  },
   "extra": {
     "branch-alias": {
       "dev-master": "0.5.x-dev"
