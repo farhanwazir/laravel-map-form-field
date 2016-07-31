@@ -22,7 +22,8 @@
   "require": {
     "php": ">=5.6.0",
     "laravel/framework": "5.*",
-    "farhanwazir/laravelgooglemaps": "^1.8"
+    "laravelcollective/html": "5.2.*",
+    "farhanwazir/laravelgooglemaps": "2.*"
   },
   "autoload": {
     "psr-4": {

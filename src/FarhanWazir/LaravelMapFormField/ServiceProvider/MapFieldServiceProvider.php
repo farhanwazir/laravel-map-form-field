@@ -7,7 +7,7 @@ class MapFieldServiceProvider extends ServiceProvider {
 
     public function boot()
     {
-        require '../MapField.php';
+        require realpath(__DIR__ . '/..') . '/MapField.php';
     }
 
     /**
