@@ -10,10 +10,9 @@
 Form::macro('map', function($name, $value = null, $settings = false, $attributes = false){
     //Default settings
     $default_settings = [
-        'search' => false,
-        'latlng' => false,
-        /*'search-align' => 'top_center',
-        'latLng-align' => 'bottom_center'*/
+        'search' => true,
+        'latlng' => true,
+        'height' => '100%',
     ];
 
     //TODO: Merge user settings with default
@@ -24,11 +23,11 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
     $field_name_lng = 'fw_map_form_field_lng';
 
     $field_class_search = (is_array($attributes) && array_key_exists('search', $attributes) && array_key_exists('class', $attributes['search']))?
-        $attributes['search']['class'] : '';
+        $attributes['search']['class'] : 'form-control';
     $field_class_lat = (is_array($attributes) && array_key_exists('latitude', $attributes) && array_key_exists('class', $attributes['latitude']))?
-        $attributes['latitude']['class'] : '';
+        $attributes['latitude']['class'] : 'form-control';
     $field_class_lng = (is_array($attributes) && array_key_exists('longitude', $attributes) && array_key_exists('class', $attributes['longitude']))?
-        $attributes['longitude']['class'] : '';
+        $attributes['longitude']['class'] : 'form-control';
 
     if(is_array($attributes)){
         if(array_key_exists('latitude', $attributes) && array_key_exists('name', $attributes['latitude']))
@@ -37,20 +36,20 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
             $field_name_lng = $attributes['longitude']['name'];
     }
 
-    $fields = '';
-    if($settings['search'])
-        $fields .= Form::text($field_name_search, null, ['placeholder' => 'Search place', 'id' => 'fw-map-form-field-place-search', 'class' => $field_class_search]);
-    if($settings['latlng']){
-        $fields .= Form::text($field_name_lat, null, ['placeholder' => 'Latitude', 'id' => 'fw-map-form-field-lat', 'class' => $field_class_lat]);
-        $fields .= Form::text($field_name_lng, null, ['placeholder' => 'Longitude', 'id' => 'fw-map-form-field-lng', 'class' => $field_class_lng]);
-    }else{
-        $fields .= '<input type="hidden" id="fw-map-form-field-lat"><input type="hidden" id="fw-map-form-field-lng">';
-    }
-
     //Map facade, see detail at https://github.com/farhanwazir/laravelgooglemaps
     $GMaps = app()->make('GMaps');
-    $GMaps->injectControlsInTopCenter = ['document.getElementById("fw-map-form-field-place-search")'];
-    $GMaps->injectControlsInBottomCenter = ['document.getElementById("fw-map-form-field-lat")', 'document.getElementById("fw-map-form-field-lng")'];
+
+    $fields = '';
+    if($settings['search']){
+        $fields .= Form::text($field_name_search, null, ['placeholder' => 'Search place', 'class' => $field_class_search, 'id' => 'fw-map-form-field-place-search']);
+        $GMaps->injectControlsInTopCenter = ['document.getElementById("fw-map-form-field-place-search")'];
+    }
+
+    if($settings['latlng']){
+        $fields .= Form::text($field_name_lat, null, ['placeholder' => 'Latitude', 'class' => $field_class_lat, 'id' => 'fw_map_form_field_lat']);
+        $fields .= Form::text($field_name_lng, null, ['placeholder' => 'Longitude', 'class' => $field_class_lng, 'id' => 'fw_map_form_field_lng']);
+        $GMaps->injectControlsInBottomCenter = ['document.getElementById("fw_map_form_field_lat")', 'document.getElementById("fw_map_form_field_lng")'];
+    }
 
     $marker = array();
     $marker['draggable'] = true;
@@ -65,21 +64,22 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
                 iw_'. $GMaps->getMapName() .'.close();
             }
         }, this);
-        '. $GMaps->injectControlsInBottomCenter[0] .'.value = event.latLng.lat();
-        '. $GMaps->injectControlsInBottomCenter[1] .'.value = event.latLng.lng();
         '. $GMaps->getMapName() .'.setCenter(event.latLng);
         ';
 
+    if($settings['latlng'])
+        $marker['ondragend'] .= $GMaps->injectControlsInBottomCenter[0] .'.value = event.latLng.lat();
+        '. $GMaps->injectControlsInBottomCenter[1] .'.value = event.latLng.lng();';
+
     $config = array();
-    $config['map_height'] = "100%";
+    $config['map_height'] = $settings['height'];
     $config['center'] = 'auto';
-    $config['onboundschanged'] = 'var centreGot = false; if (!centreGot) {
-            var mapCentre = '. $GMaps->getMapName() .'.getCenter();
-            marker_0.setOptions({
-                position: new google.maps.LatLng(mapCentre.lat(), mapCentre.lng())
-            });
-        }
-        centreGot = true;
+    $config['onboundschanged'] = '
+        var mapCentre = '. $GMaps->getMapName() .'.getCenter();
+        marker_0.setOptions({
+            position: mapCentre
+        });
+        centerGot = true;
         event = {latLng: mapCentre};
         '.$marker['ondragend'];
     $config['places'] = $settings['search'];
