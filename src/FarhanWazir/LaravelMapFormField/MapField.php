@@ -13,6 +13,10 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
         'search' => true,
         'latlng' => true,
         'height' => '100%',
+        'zoom' => 14,
+        'onLoad' => '',
+        'onStaged' => '',
+        'onMarkerPositionChanged' => '',
     ];
 
     //TODO: Merge user settings with default
@@ -53,6 +57,7 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
 
     $marker = array();
     $marker['draggable'] = true;
+    $marker['onpositionchanged'] = $settings['onMarkerPositionChanged'];
     $marker['ondragend'] = '
         /*iw_'. $GMaps->getMapName() .'.close();*/
         iw_'. $GMaps->getMapName() .'.setContent("Loading... Please wair or if you seeing this since long then move marker or map.");
@@ -68,19 +73,22 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
         ';
 
     if($settings['latlng'])
-        $marker['ondragend'] .= $GMaps->injectControlsInBottomCenter[0] .'.value = event.latLng.lat();
-        '. $GMaps->injectControlsInBottomCenter[1] .'.value = event.latLng.lng();';
+        $marker['ondragend'] .= $GMaps->injectControlsInBottomCenter[0] .'.value = (typeof event.latLng == "object")?event.latLng.lat():"";
+        '. $GMaps->injectControlsInBottomCenter[1] .'.value = (typeof event.latLng == "object")?event.latLng.lng():"";';
 
     $config = array();
     $config['map_height'] = $settings['height'];
+    $config['zoom'] = $settings['zoom'];
     $config['center'] = 'auto';
+    $config['onload'] = $settings['onLoad'];
+    $config['onstaged'] = $settings['onStaged'];
     $config['onboundschanged'] = '
         var mapCentre = '. $GMaps->getMapName() .'.getCenter();
         marker_0.setOptions({
             position: mapCentre
         });
         centerGot = true;
-        event = {latLng: mapCentre};
+        event = {latLng : mapCentre};
         '.$marker['ondragend'];
     $config['places'] = $settings['search'];
     $config['placesAutocompleteInputID'] = 'fw-map-form-field-place-search';
@@ -98,4 +106,3 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
     $map = $GMaps->create_map();
     return $fields . $map['js'] . $map['html'];
 });
-
