@@ -13,6 +13,7 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
         'search' => true,
         'latlng' => true,
         'height' => '100%',
+        'position' => null,
         'zoom' => 14,
         'onLoad' => '',
         'onStaged' => '',
@@ -21,6 +22,17 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
 
     //TODO: Merge user settings with default
     $settings = is_array($settings) ? array_merge($default_settings, $settings) : $default_settings;
+
+    /* Filter position */
+    $position = is_array($settings['position']) ? $settings['position'] : explode(',', $settings['position']);
+    $latlng = $settings['position'] ? $position : null;
+    $field_lat_val = null;
+    $field_lng_val = null;
+    if(count($position) == 2){
+        $position_keys = array_keys($position);
+        $field_lat_val = $position[$position_keys[0]];
+        $field_lng_val = $position[$position_keys[1]];
+    }
 
     $field_name_search = 'fw_map_form_field_place_search';
     $field_name_lat = 'fw_map_form_field_lat';
@@ -50,8 +62,8 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
     }
 
     if($settings['latlng']){
-        $fields .= Form::text($field_name_lat, null, ['placeholder' => 'Latitude', 'class' => $field_class_lat, 'id' => 'fw_map_form_field_lat']);
-        $fields .= Form::text($field_name_lng, null, ['placeholder' => 'Longitude', 'class' => $field_class_lng, 'id' => 'fw_map_form_field_lng']);
+        $fields .= Form::text($field_name_lat, $field_lat_val, ['placeholder' => 'Latitude', 'class' => $field_class_lat, 'id' => 'fw_map_form_field_lat']);
+        $fields .= Form::text($field_name_lng, $field_lng_val, ['placeholder' => 'Longitude', 'class' => $field_class_lng, 'id' => 'fw_map_form_field_lng']);
         $GMaps->injectControlsInBottomCenter = ['document.getElementById("fw_map_form_field_lat")', 'document.getElementById("fw_map_form_field_lng")'];
     }
 
@@ -79,7 +91,7 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
     $config = array();
     $config['map_height'] = $settings['height'];
     $config['zoom'] = $settings['zoom'];
-    $config['center'] = 'auto';
+    $config['center'] = $settings['position'] ? (is_array($settings['position']) ? implode(',', $settings['position']) : $settings['position']) : 'auto';
     $config['onload'] = $settings['onLoad'];
     $config['onstaged'] = $settings['onStaged'];
     $config['onboundschanged'] = '
