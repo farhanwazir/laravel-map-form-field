@@ -14,4 +14,4 @@
         ]);
 ```
 
-More details will be update later, i'm very busy in my projects. Hope fully after a week, you will see complete, please click on watch button.
+More details will update later, i'm very busy in my projects. Hope fully after a week, you will see complete, please click on watch button.
