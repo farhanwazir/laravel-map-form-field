@@ -13,3 +13,5 @@
             'search' => ['class' => 'map-place-search-controls map-place-search'],
         ]);
 ```
+
+More details will be update later, i'm very busy in my projects. Hope fully after a week, you will see complete, please click on watch button.
