@@ -15,6 +15,7 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
         'height' => '100%',
         'position' => null,
         'zoom' => 14,
+        'async' => false,
         'onLoad' => '',
         'onStaged' => '',
         'onMarkerPositionChanged' => '',
@@ -89,6 +90,7 @@ Form::macro('map', function($name, $value = null, $settings = false, $attributes
         '. $GMaps->injectControlsInBottomCenter[1] .'.value = (typeof event.latLng == "object")?event.latLng.lng():"";';
 
     $config = array();
+    $config['loadAsynchronously'] = $settings['async'];
     $config['map_height'] = $settings['height'];
     $config['zoom'] = $settings['zoom'];
     $config['center'] = $settings['position'] ? (is_array($settings['position']) ? implode(',', $settings['position']) : $settings['position']) : 'auto';
