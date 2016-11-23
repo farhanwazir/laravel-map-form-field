@@ -6,6 +6,8 @@
             'height' => '350px',
             'onStaged' => 'onMapInitialized',
             'position' => $position,
+            'async' => true, /* for ajax use only, when use async then it needs to call loadScript_map() manually 
+                                after response print in screen. */
             'onMarkerPositionChanged' => 'onMarkerPositionChanged',
         ], [
             'latitude' => ['name' => 'latitude', 'class' => 'map-place-search-controls map-place-search map-latlng-controls'],
