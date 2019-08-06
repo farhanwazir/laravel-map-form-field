@@ -22,7 +22,7 @@
   "require": {
     "php": ">=5.6.0",
     "laravel/framework": "5.*",
-    "laravelcollective/html": "5.2.*",
+    "laravelcollective/html": "5.*",
     "farhanwazir/laravelgooglemaps": "2.*"
   },
   "autoload": {
